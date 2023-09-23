@@ -1,0 +1,28 @@
+import * as cdk from 'aws-cdk-lib';
+import * as iot from 'aws-cdk-lib/aws-iot';
+
+const app = new cdk.App();
+
+const stack = new cdk.Stack(app, 'IoTStack', {
+  env: {
+    account: process.env.CDK_DEFAULT_ACCOUNT,
+    region: process.env.CDK_DEFAULT_REGION,
+  },
+});
+
+const rule = new iot.CfnTopicRule(stack, 'MyIotRule', {
+  ruleName: 'MyIotRule',
+  topicRulePayload: {
+    actions: [
+      {
+        lambda: {
+          functionArn: 'arn:aws:lambda:YOUR_REGION:YOUR_ACCOUNT_ID:function:YOUR_LAMBDA_FUNCTION',
+        },
+      },
+    ],
+    ruleDisabled: false,
+    sql: 'SELECT * FROM "iot/topic"',
+  },
+});
+
+app.synth();
